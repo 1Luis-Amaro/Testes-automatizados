@@ -1,4 +1,3 @@
-import { except } from "drizzle-orm/gel-core";
 import { validateTodoDescription } from "./validate-todo-description"
 
 describe('validateTodoDesciption, (unit)', () => {

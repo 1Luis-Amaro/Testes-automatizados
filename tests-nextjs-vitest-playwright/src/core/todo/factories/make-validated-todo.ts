@@ -3,12 +3,12 @@ import { Todo } from "../schemas/todo.contract";
 import { validateTodoDescription } from "../schemas/validate-todo-description";
 import { makeNewTodo } from "./make-new-todo";
 
-type InvalidTodo = { //crio esse tipo para criar regras e manter a estrutura do meu código integro (caso de erro)
+export type InvalidTodo = { //crio esse tipo para criar regras e manter a estrutura do meu código integro (caso de erro)
     success: false;
     errors: string[]
 }
 
-type ValidTodo = { //crio esse tipo para criar regras e manter a estrutura do meu código integro (caso de sucesso)
+export type ValidTodo = { //crio esse tipo para criar regras e manter a estrutura do meu código integro (caso de sucesso)
     success: true;
     data: Todo
 }

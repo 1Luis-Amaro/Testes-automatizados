@@ -10,4 +10,4 @@ export const todoTable = sqliteTable('todo', { //criando minha tablea com o nome
 
 //tipos que eu criei 
 export type TodoTableSelectModel = InferSelectModel<typeof todoTable> /// Tipo para SELECT (quando você busca dados do banco): todos os campos são obrigatórios
-export type TodoTableInsertModel = InferInsertModel<typeof todoTable> // Tipo para INSERT (quando você insere dados no banco): campos com default são opcionais
+export type TodoTableInsertModel = InferInsertModel<typeof todoTable> // Tipo para INSERT (quando você insere dados no banco): campos com default são opcionais     

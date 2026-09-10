@@ -1,26 +1,39 @@
+import { join, posix } from 'path';
+
+const commonKeys = {
+  drizzleSchemaFiles: [
+    posix.join('src', 'core', 'todo', 'schemas', 'drizzle-todo-table.schema.ts'), 
+  ],
+  drizzleMigrationsFolder: posix.join('src', 'db', 'drizzle', 'migrations'),
+};
+
 const envConfigs = {
   development: {
     databaseFile: 'dev.db.sqlite3',
     currentEnv: 'development',
+        ...commonKeys,
   },
   production: {
     databaseFile: 'prod.db.sqlite3',
     currentEnv: 'production',
+        ...commonKeys,
   },
   test: {
     databaseFile: '.int.test.db.sqlite3',
     currentEnv: 'test',
+        ...commonKeys,  
   },
   e2e: {
     databaseFile: 'e2e.test.db.sqlite3',
     currentEnv: 'e2e',
+        ...commonKeys,
   },
 } as const;
 
 type ConfigsByEnv = {
   readonly databaseFile: string;
   readonly currentEnv: keyof EnvConfigs;
-};
+} & typeof commonKeys;
 
 type EnvConfigs = typeof envConfigs;
 type AllowedEnvKeys = keyof EnvConfigs;

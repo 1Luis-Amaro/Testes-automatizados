@@ -1,7 +1,8 @@
 import * as sanitizeStrMod from "@/utils/sanitize-str" //estou pegando todo o module de limpeza de caracteres 
-import { InvalidTodo, makeValidetedTodo, ValidTodo } from "./make-validated-todo" // Importo os tipos de tarefa válida e inválida, e a função que faz a validação completa
+import { makeValidetedTodo } from "./make-validated-todo" // Importo os tipos de tarefa válida e inválida, e a função que faz a validação completa
 import * as validateTodoDescriptionMod from "../schemas/validate-todo-description" // Importo o módulo que valida a descrição da tarefa (mínimo de 3 caracteres)
 import * as makeMocksTodoMod from "./make-new-todo" // Importo o módulo que cria uma nova tarefa (com id, descrição e data)
+import { InvalidTodo, ValidTodo } from "../schemas/todo.contract"
 
 describe('makeValidatedTodo (unit)', () => {  // Bloco de testes unitários para a função makeValidatedTodo
     test('deve chamar a função sanitizeStr com o valor correto', () => { /// O que o teste deve fazer: verificar se sanitizeStr foi chamada
@@ -54,9 +55,9 @@ describe('makeValidatedTodo (unit)', () => {  // Bloco de testes unitários para
 
         expect(result.success).toBe(true) // Verifico se o success é true (deu tudo certo)
 
-        expect(result.data.id).toBe('any-id')  // Verifico se o id da tarefa é 'any-id' (valor definido no mock)
-        expect(result.data.description).toBe('abcd'); // Verifico se a descrição da tarefa é 'abcd' (valor definido no mock)
-        expect(result.data.createdAt).toBe('any-date'); // Verifico se a data de criação é 'any-date' (valor definido no mock)
+        expect(result.todo.id).toBe('any-id')  // Verifico se o id da tarefa é 'any-id' (valor definido no mock)
+        expect(result.todo.description).toBe('abcd'); // Verifico se a descrição da tarefa é 'abcd' (valor definido no mock)
+        expect(result.todo.createdAt).toBe('any-date'); // Verifico se a data de criação é 'any-date' (valor definido no mock)
     });
 
     test('deve retornar a validatedDescription.error se a validação falhou', () => {// o que meu teste deve fazer, verificar se retorna os erros quando a validação falha

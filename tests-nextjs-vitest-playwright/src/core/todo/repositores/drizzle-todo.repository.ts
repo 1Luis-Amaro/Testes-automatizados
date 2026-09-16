@@ -31,7 +31,7 @@ export class DrizzleTodoRepository implements TodoRepository {  // Crio uma clas
         if (!!existingTodo) { // Se já existe um todo com o mesmo ID ou descrição (!! converte para boolean)
             return { //vou retornar um estado de erro
                 success: false, //deixo o success como false ja que a operação falhou
-                errors: ['Já existe um todo com o ID ou descrição enviados'] //e mando esse erro para o usuário
+                errors: ['Já existe um todo com ID ou descrição enviados'] //e mando esse erro para o usuário
             }
         }
 
@@ -47,7 +47,7 @@ export class DrizzleTodoRepository implements TodoRepository {  // Crio uma clas
     if(!existingTodoremove) { // Se NÃO encontrou o todo (tarefa não existe
         return { //então vou retornar um estado de erro
             success: false, //deixo o success como false já que a operação falhou
-            errors: ['Tarefa não existe'] //e mando esse erro pro usuário
+            errors: ['Todo não existe'] //e mando esse erro pro usuário
         }
 
     }

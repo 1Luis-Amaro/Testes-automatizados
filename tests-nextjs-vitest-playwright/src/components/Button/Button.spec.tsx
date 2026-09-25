@@ -1,41 +1,91 @@
-import { render, screen } from "@testing-library/react"; // Importa as funções render e screen da Testing Library
-import { Button } from "."; // Importa o componente Button
+import { render, screen } from '@testing-library/react'; // Importa as funções render e screen da Testing Library
+import { Button } from '.'; // Importa o componente Button
+import { userEvent } from '@testing-library/user-event';
 
-describe('<Button />', () => { //descrição do que irei testar, nesse caso vai ser meu componente Button
-  describe('props padrão e JSX', () => { /// Sub-descrição: testa as props padrão e o JSX do botão 
-    test('deve renderizar o botão com props padrão (apenas com children)', async () => { //o que o teste ira fazer
+const VARIANT_DEFAULT_CLASSES = 'bg-blue-600 hover:bg-blue-700 text-blue-100';
+const VARIANT_DANGER_CLASSES = 'bg-red-600 hover:bg-red-700 text-red-100';
+const VARIANT_GHOST_CLASSES = 'bg-slate-300 hover:bg-slate-400 text-slate-950';
+const SIZE_DEFAULT_CLASSES =
+  'text-base/tight py-2 px-4 rounded-md [&_svg]:w-4 [&_svg]:h-4 gap-2';
+
+describe('<Button />', () => {
+  //descrição do que irei testar, nesse caso vai ser meu componente Button
+  describe('props padrão e JSX', () => {
+    /// Sub-descrição: testa as props padrão e o JSX do botão
+    test('deve renderizar o botão com props padrão (apenas com children)', async () => {
+      //o que o teste ira fazer
       render(<Button>Enviar formulário</Button>); // Renderiza o componente Button no DOM virtual com o texto "Enviar formulário"
 
-      const button = screen.getByRole('button', { // Busca o elemento <button> no DOM pelo seu papel (role)
-        name: /enviar formulário/i //// E pelo texto (usando regex para ignorar maiúsculas/minúsculas)
-      })
+      const button = screen.getByRole('button', {
+        // Busca o elemento <button> no DOM pelo seu papel (role)
+        name: /enviar formulário/i, //// E pelo texto (usando regex para ignorar maiúsculas/minúsculas)
+      });
 
-      expect(button).toBeInTheDocument() // Espero que o elemento exista no DOM
-      expect(button).toHaveClass('bg-blue-600 hover:bg-blue-700 text-blue-100')  // Espero que o elemento tenha as classes da variante 'default'
-      expect(button).toHaveClass( // Espero que o elemento tenha as classes do tamanho 'md'
-        'text-base/tight py-2 px-4 rounded-md [&_svg]:w-4 [&_svg]:h-4 gap-2')
+      expect(button).toBeInTheDocument(); // Espero que o elemento exista no DOM
+      expect(button).toHaveClass(VARIANT_DEFAULT_CLASSES); // Espero que o elemento tenha as classes da variante 'default'
+      expect(button).toHaveClass(
+        // Espero que o elemento tenha as classes do tamanho 'md'
+        SIZE_DEFAULT_CLASSES,
+      );
     });
 
-    // test('verifica se as propriedades padrão do JSX funcionam corretamente', async () => {});
+    test('verifica se as propriedades padrão do JSX funcionam corretamente', async () => { //o que meu teste deve fazer
+      const handleClick = vi.fn(); // Simulo uma função que não faz nada (apenas registra chamadas)
+      render(<Button onClick={handleClick} type='submit' aria-hidden='false'>  { /*Renderiza o componente Button no DOM virtual com o texto "Enviar formulário"/*/}
+          Enviar formulário
+        </Button>,
+      ); 
+
+      const button = screen.getByText('Enviar formulário'); //busco o elemento texto que tem dentro do meu botão
+      await userEvent.click(button); // Simulo um clique no botão que eu busquei pelo texto 
+      await userEvent.click(button); // Simulo um clique no botão que eu busquei pelo texto 
+
+      expect(handleClick).toHaveBeenCalledTimes(2); //quando eu clico no botão disparo a função handleClick, então eu espero que essa função tenha sido chamada duas vezes
+      expect(button).toHaveAttribute('type', 'submit'); //espero que meu button tenha o atributo type='submit'
+      expect(button).toHaveAttribute('aria-hidden', 'false');  //espero que meu button tenha o atributo aria-hidden='false'
+    });
   });
 
-  // describe('variants (cores)', () => {
-  //   test('checa se default aplica a cor correta', async () => {});
+  describe('variants (cores)', () => {// Descrição desse novo trecho de testes (variantes de cor)
+    test('checa se default aplica a cor correta', async () => { //o que meu teste deve fazer
+      render( <Button variant='default' title='o botão'> {/* Renderiza o Button com variant='default' e title='o botão' */}
+          Enviar formulário
+        </Button>,
+      ); 
 
-  //   test('checa se danger aplica a cor correta', async () => {});
+      const button = screen.getByTitle('o botão'); //busco o meu botão pelo title dele 
+      expect(button).toHaveClass(VARIANT_DEFAULT_CLASSES); // Espero que o button tenha as classes da variante 'default'
+    });
 
-  //   test('checa se ghost aplica a cor correta', async () => {});
-  // });
+    test('checa se danger aplica a cor correta', async () => { //o que meu teste deve fazer
+      render(<Button variant='danger' title='o botão'>{ /*Renderiza o componente Button no DOM virtual com o texto "Enviar formulário"/*/}
+          Enviar formulário
+        </Button>,
+      ); 
 
-  // describe('size (tamanhos)', () => {
-  //   test('tamanho sm deve ser menor', async () => {});
+      const button = screen.getByTitle('o botão'); //pego o meu botão pelo title dele 
+      expect(button).toHaveClass(VARIANT_DANGER_CLASSES); // Espero que o elemento tenha as classes da variante 'danger'
+    });
 
-  //   test('tamanho md deve ser médio', async () => {});
+      test('checa se ghost aplica a cor correta', async () => {//o que meu teste deve fazer
+        render(<Button variant='ghost' title='o botão' >{ /*Renderiza o componente Button no DOM virtual com o texto "Enviar formulário"/*/}
+                Enviar formulário
+            </Button>
+        )
+        const button = screen.getByTitle('o botão') //pego o meu botão pelo title dele 
+        expect(button).toHaveClass(VARIANT_GHOST_CLASSES)// Espero que o elemento tenha as classes da variante 'ghost'
+      });
+    });
 
-  //   test('tamanho lg deve ser grande', async () => {});
-  // });
+    // describe('size (tamanhos)', () => {
+    //   test('tamanho sm deve ser menor', async () => {});
 
-  // describe('disabled', () => {
-  //   test('classes para estado desativado estão corretas', async () => {});
-  // });
-});
+    //   test('tamanho md deve ser médio', async () => {});
+
+    //   test('tamanho lg deve ser grande', async () => {});
+    // });
+
+    // describe('disabled', () => {
+    //   test('classes para estado desativado estão corretas', async () => {});
+    // });
+  });

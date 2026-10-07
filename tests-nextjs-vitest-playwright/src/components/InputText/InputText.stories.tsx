@@ -1,5 +1,5 @@
 import { InputText } from '.'; // Importa o componente InputText do arquivo index da pasta
-import type { Meta, StoryObj } from '@storybook/react'; // Importa os tipos Meta e StoryObj do Storybook
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta: Meta<typeof InputText> = { // Crio um objeto do tipo Meta, usando o componente InputText como referência
   title: 'Components/Forms/InputText', // Define o título que aparece no menu lateral do Storybook (pasta Components > Forms > InputText)

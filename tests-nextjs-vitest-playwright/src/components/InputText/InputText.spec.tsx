@@ -110,25 +110,25 @@ describe('<InputText />', () => { //descrição do que estou tenstando, nesse ca
       });
     });
 
-    describe('estados visuais', () => {
-      test('aplica classes visuais quando desabilitado ', async () => {
-        const el = input({ disabled: true });
-        expect(el).toHaveClass('disabled:bg-slate-200 disabled:text-slate-400');
+    describe('estados visuais', () => { // Sub-descrição: testa estados visuais do input
+      test('aplica classes visuais quando desabilitado ', async () => {//o que meu teste deve fazer
+        const el = input({ disabled: true }); //renderizo meu input com o elemnto disabled como true (input vai estar desativado)
+        expect(el).toHaveClass('disabled:bg-slate-200 disabled:text-slate-400'); //espero que o input tenha esse css (css de um input desativado)
       });
 
-      test('aplica classes visuais quando readonly', async () => {
-        const el = input({ readOnly: true });
-        expect(el).toHaveClass('read-only:bg-slate-100');
+      test('aplica classes visuais quando readonly', async () => { // o que esse teste deve fazer 
+        const el = input({ readOnly: true }); // renderizo meu input com o elemento readOnly true 
+        expect(el).toHaveClass('read-only:bg-slate-100'); //espero que o input tenha esse css (css de um input quando está em modo de leitura)
       });
 
-      test('adiciona classe de erro (ring vermelha) quando inválido', async () => {
-        const el = input({ errorMessage: 'Erro' });
-        expect(el).toHaveClass('ring-red-500 focus:ring-red-700');
+      test('adiciona classe de erro (ring vermelha) quando inválido', async () => {  // o que esse teste deve fazer 
+        const el = input({ errorMessage: 'Erro' });// renderizo meu input com o elemento errorMessage com o texto erro 
+        expect(el).toHaveClass('ring-red-500 focus:ring-red-700');//espero que o input tenha esse css (css de um input quando está com erro)
       });
 
-      test('mantém classes personalizadas do desenvolvedor', async () => {
-        const el = input({ className: 'custom' });
-        expect(el).toHaveClass('custom' );
+      test('mantém classes personalizadas do desenvolvedor', async () => {  // o que esse teste deve fazer 
+        const el = input({ className: 'custom' }); //renderizo meu input com uma classe criado pelo desenvolvedor a custom 
+        expect(el).toHaveClass('custom' ); //espero que meu input mantenha essa classe criada 
       });
     });
   });

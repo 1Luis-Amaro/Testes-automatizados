@@ -62,7 +62,7 @@ describe('<TodoList /> (integration)', () => { // Descrição do bloco de testes
     const btns = within(list).getAllByRole('button'); // Busca todos os botões DENTRO da lista
     await user.click(btns[1]); // Simula um clique no segundo botão
 
-    const expectedDisabledCls = 'bg-amber-200 text-amber-900 hover:scale-105 transition flex justify-between py-2 px-4 rounded-lg'; // Classes esperadas quando o item está desabilitado
+    const expectedDisabledCls = 'bg-amber-200 text-amber-900 hover:scale-105 transition flex justify-between py-2 px-4 rounded-lg '; // Classes esperadas quando o item está desabilitado
     const expectedEnabledCls = 'bg-amber-200 text-amber-900 hover:scale-105'; // Classes esperadas quando o item está habilitado
 
     await waitFor(() => { // Espera até que...
@@ -82,7 +82,7 @@ describe('<TodoList /> (integration)', () => { // Descrição do bloco de testes
     await user.click(btns[1]); // Simula um clique no segundo botão
 
     await waitFor(() => { // Espera até que...
-      btns.forEach(btn => expect(btn).toBeDisabled()); // ...todos os botões estejam desabilitados
+      btns.forEach(btn => expect(btn).toBeDisabled()); // ...todos os botões este jam desabilitados
     });
 
     await waitFor(() => { // Espera até que...

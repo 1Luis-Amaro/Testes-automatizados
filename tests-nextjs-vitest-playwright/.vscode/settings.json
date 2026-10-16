@@ -1,5 +1,4 @@
 {
-  "code-runner.executorMap": {
-    "typescript": "npx dotenv -e .env.development -- tsx"
-  }
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

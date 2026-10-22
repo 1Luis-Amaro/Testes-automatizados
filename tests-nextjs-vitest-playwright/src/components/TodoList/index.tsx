@@ -1,3 +1,4 @@
+'use client'
 import { DeleteTodoAction } from '@/core/todo/actions/todo.action.type'; // Importa o tipo da action de deletar
 import { Todo } from '@/core/todo/schemas/todo.contract'; // Importa o tipo Todo
 import { sanitizeStr } from '@/utils/sanitize-str'; // Importa a função que limpa strings

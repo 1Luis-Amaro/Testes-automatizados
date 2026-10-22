@@ -1,7 +1,5 @@
-import { CreateTodoAction } from '@/core/todo/actions/todo.action.types'; // Importa o tipo da ação de criar tarefa
 import { TodoForm } from '.'; // Importa o componente TodoForm
 import type { Meta, StoryObj } from '@storybook/react'; // Importa os tipos Meta e StoryObj do Storybook
-import { fn } from '@storybook/test'; // Importa a função 'fn' (função simulada) do Storybook
 import { todoActionStoryMock } from '@/core/__tests__/utils/todo-action-story';
 
 const meta: Meta<typeof TodoForm> = {// Objeto que define as configurações globais das stories para o componente TodoForm

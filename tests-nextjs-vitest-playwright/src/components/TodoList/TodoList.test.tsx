@@ -75,7 +75,7 @@ describe('<TodoList /> (integration)', () => { // Descrição do bloco de testes
   });
 
   test('deve desativar os botões da lista enquanto envia a action', async () => { // O que o teste verifica: se os botões ficam desabilitados enquanto a action roda
-    renderList({ delay: 10 }); // Renderiza a lista com um delay de 10ms na action
+    renderList({ delay: 15 }); // Renderiza a lista com um delay de 10ms na action
 
     const list = screen.getByRole('list', { name: /lista de tarefas/i }); // Busca a lista
     const btns = within(list).getAllByRole('button'); // Busca todos os botões DENTRO da lista

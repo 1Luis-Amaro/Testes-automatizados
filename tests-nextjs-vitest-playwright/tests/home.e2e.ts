@@ -80,5 +80,22 @@ test.describe('<Home /> (E2E)', () => {
 
             await expect(createdTodoText).toBe(textTrimmed);
         });
+        test('deve permitir que eu crie mais de um TODO', async({page}) => {
+            const {btn, input} = getAll(page)
+            const todo1 = 'Todo 1'
+            const todo2 = 'Todo 2'
+
+            await input.fill(todo1)
+            await btn.click()
+
+            const todo1Item = page.getByRole('listitem').filter({hasText: todo1})
+            await expect(todo1Item).toBeVisible()
+
+            await input.fill(todo2)
+            await btn.click()
+
+            const todo2Item = page.getByRole('listitem').filter({hasText: todo2})
+            await expect(todo2Item).toBeVisible()
+        })
     })
 })

@@ -1,4 +1,4 @@
-import { makeTestTodoRepository } from '@/core/__tests__/utils/make-test-todo-repository' // Importa a função que cria o repositório de testes
+import { insertTestTodos, makeTestTodoRepository } from '@/core/__tests__/utils/make-test-todo-repository' // Importa a função que cria o repositório de testes
 import { test, expect, Page } from '@playwright/test' // Importa as funções do Playwright
 
 const HOME_URL = '/' // URL da página inicial
@@ -46,7 +46,7 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
             await expect(getBtn(page)).toBeVisible() // Espero que o botão esteja visível
         })
     })
-    
+
     test.describe('Criação', () => { // Sub-descrição: testes de criação de tarefas
         test('deve permitir criar um TODO', async ({ page }) => { // O que o teste verifica: se consigo criar uma tarefa
             const { btn, input } = getAll(page) // Pego os elementos da página
@@ -59,7 +59,7 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
                 .filter({ hasText: NEW_TODO_TEXT }) // Filtro pelo texto da tarefa que acabei de criar
             await expect(createdTodo).toBeVisible() // Espero que a tarefa criada esteja visível na tela
         })
-        
+
         test('deve fazer o trim da descrição do input ao criar o TODO', async ({ page }) => { // O que o teste verifica: se os espaços em branco são removidos
             const { btn, input } = getAll(page); // Pego os elementos da página
 
@@ -76,7 +76,7 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
 
             await expect(createdTodoText).toBe(textTrimmed); // Espero que o texto na tela seja igual ao texto sem espaços
         });
-        
+
         test('deve permitir que eu crie mais de um TODO', async ({ page }) => { // O que o teste verifica: se consigo criar várias tarefas seguidas
             const { btn, input } = getAll(page) // Pego os elementos da página
             const todo1 = 'Todo 1' // Primeira tarefa
@@ -94,7 +94,7 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
             const todo2Item = page.getByRole('listitem').filter({ hasText: todo2 }) // Busco o segundo item criado
             await expect(todo2Item).toBeVisible() // Espero que ele esteja visível
         })
-        
+
         test('deve desativar o botão enquanto cria o TODO', async ({ page }) => { // O que o teste verifica: se o botão fica bloqueado durante a criação
             const { btn, input } = getAll(page) // Pego os elementos da página
 
@@ -112,7 +112,7 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
             await expect(btn).toBeVisible(); // Espero que o botão normal volte a aparecer
             await expect(btn).toBeEnabled(); // E que ele esteja habilitado novamente
         })
-        
+
         test('deve desativar o input enquanto cria o TODO', async ({ page }) => { // O que o teste verifica: se o input fica bloqueado durante a criação
             const { btn, input } = getAll(page) // Pego os elementos da página
 
@@ -127,6 +127,57 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
             await expect(createdTodo).toBeVisible(); // Espero que a tarefa apareça na tela
 
             await expect(input).toBeEnabled(); // Espero que o input seja habilitado novamente após a criação
+        })
+        test('deve limpar o input após criar o TODO', async ({ page }) => { // O que o teste verifica: se o input é limpo após criar a tarefa
+            const { btn, input } = getAll(page) // Pego os elementos da página
+            await input.fill(NEW_TODO_TEXT) // Digito o texto
+            await btn.click()
+
+            await expect(input).toHaveValue('') // Espero que o input esteja vazio após criar a tarefa
+
+        })
+    })
+    test.describe('Exclusão', () => {
+        test('deve permitir apagar um todo', async ({ page }) => {
+            const todos = await insertTestTodos() //crio os todos
+            await page.reload() //make next.js revalidate cache , recarrego a pagina para o next recarregar o cash
+
+            const itemToDelete = page //pego a minha pagina
+                .getByRole('listitem') //depois pego o elemento listitem
+                .filter({ hasText: todos[1].description }) //e filtro o que que está no i ndice 1 com sua sua descrição
+            await expect(itemToDelete).toBeVisible() //verifico se esse todo está visivel 
+
+            const deleteBtn = itemToDelete.getByRole('button') //se está oego o buton
+            await deleteBtn.click() //clico nele
+
+            await itemToDelete.waitFor({ state: 'detached' }) //espero que ele seja removido da pagina
+            await expect(itemToDelete).not.toBeVisible() //checo se realemente ele não está na página 
+
+
+        })
+        test('deve permitir apagar todos os TODOs', async ({ page }) => {
+            await insertTestTodos() // Crio as tarefas de teste no banco de dados
+            await page.reload() // Recarrego a página para o Next.js revalidar o cache e mostrar as novas tarefas
+
+            while (true) { // Inicio um loop infinito (que só vai parar quando não houver mais itens)
+                const item = page.getByRole('listitem').first()  // Pego o primeiro item da lista de tarefas
+                const isVisible = await item.isVisible().catch(() => false) // Verifico se esse item está visível na tela (se der erro, considero como false)
+                if (!isVisible) break // Se o item não estiver visível, significa que a lista acabou, então quebro o loop
+
+                const text = await item.textContent() // Pego o texto da descrição do item que vou apagar
+                if (!text) { // Se o texto vier vazio ou nulo
+                    throw Error('Item text not found') // Lanço um erro avisando que não encontrei o texto
+                }
+
+                const deleteBtn = item.getByRole('button') // Busco o botão de deletar DENTRO desse item específico
+                await deleteBtn.click()// Clico no botão para apagar a tarefa
+
+                const renewdItem = page // Pego a página novamente
+                    .getByRole('listitem') // Busco os itens da lista
+                    .filter({ hasText: text })// Filtro pelo texto do item que acabei de apagar
+                await renewdItem.waitFor({ state: 'detached' }) // Espero até que esse item seja removido do DOM (desanexado)
+                await expect(renewdItem).not.toBeVisible() // Confirmo que ele realmente não está mais visível na página
+            }
         })
     })
 })

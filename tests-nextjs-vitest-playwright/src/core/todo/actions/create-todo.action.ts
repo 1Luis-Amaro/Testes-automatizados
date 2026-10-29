@@ -6,7 +6,7 @@ import { devOnlyDelay } from "@/utils/dev-only-delay"
  
 
  export async function createTodoAction (description: string) { // Server Action que cria uma tarefa no servidor. Recebe a descrição como parâmetro
-    await devOnlyDelay(5000) 
+    await devOnlyDelay(1000) 
     const createResult = await createTodoUseCase(description) //pego minha função de caso de uso de criação de tarefa, e passo como parametro pra ela a descrição da tarefa Ele valida e persiste o TODO no banc
      if(createResult.success) { // Se a criação foi bem-sucedida (success = true)
         revalidatePath('/') // Invalido o cache da página inicial (home) para que o Next.js busque os dados atualizados (incluindo a nova tarefa)

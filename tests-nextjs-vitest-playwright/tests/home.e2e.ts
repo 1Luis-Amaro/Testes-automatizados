@@ -137,24 +137,23 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
 
         })
     })
-    test.describe('Exclusão', () => {
-        test('deve permitir apagar um todo', async ({ page }) => {
-            const todos = await insertTestTodos() //crio os todos
-            await page.reload() //make next.js revalidate cache , recarrego a pagina para o next recarregar o cash
+    test.describe('Exclusão', () => { // Sub-descrição: testes de exclusão de tarefas
+        test('deve permitir apagar um todo', async ({ page }) => { // O que o teste verifica: se consigo apagar uma tarefa específica
+            const todos = await insertTestTodos() // Crio as tarefas de teste no banco de dados
+            await page.reload() // Recarrego a página para o Next.js revalidar o cache e mostrar as tarefas
 
-            const itemToDelete = page //pego a minha pagina
-                .getByRole('listitem') //depois pego o elemento listitem
-                .filter({ hasText: todos[1].description }) //e filtro o que que está no i ndice 1 com sua sua descrição
-            await expect(itemToDelete).toBeVisible() //verifico se esse todo está visivel 
+            const itemToDelete = page // Pego a página
+                .getByRole('listitem') // Pego os elementos da lista
+                .filter({ hasText: todos[1].description }) // Filtro a tarefa pelo texto da descrição que está no índice 1
+            await expect(itemToDelete).toBeVisible() // Verifico se essa tarefa específica está visível na tela
 
-            const deleteBtn = itemToDelete.getByRole('button') //se está oego o buton
-            await deleteBtn.click() //clico nele
+            const deleteBtn = itemToDelete.getByRole('button') // Se está visível, pego o botão de deletar
+            await deleteBtn.click() // Clico no botão para apagar
 
-            await itemToDelete.waitFor({ state: 'detached' }) //espero que ele seja removido da pagina
-            await expect(itemToDelete).not.toBeVisible() //checo se realemente ele não está na página 
-
-
+            await itemToDelete.waitFor({ state: 'detached' }) // Espero até que o item seja removido do DOM da página
+            await expect(itemToDelete).not.toBeVisible() // Verifico se ele realmente não está mais visível
         })
+
         test('deve permitir apagar todos os TODOs', async ({ page }) => {
             await insertTestTodos() // Crio as tarefas de teste no banco de dados
             await page.reload() // Recarrego a página para o Next.js revalidar o cache e mostrar as novas tarefas
@@ -178,6 +177,54 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
                 await renewdItem.waitFor({ state: 'detached' }) // Espero até que esse item seja removido do DOM (desanexado)
                 await expect(renewdItem).not.toBeVisible() // Confirmo que ele realmente não está mais visível na página
             }
+        })
+
+        test('deve desativar os items da lista enquanto envia a action', async ({ page }) => {
+            await insertTestTodos() // Crio as tarefas no banco de dados
+            await page.reload() // Recarrego a página para o Next.js revalidar o cache e mostrar as tarefas
+
+            const itemToBeDeleted = page.getByRole('listitem').first() // Pego o primeiro item da minha lista
+            const itemToBeDeletedText = await itemToBeDeleted.textContent() // Pego o texto da descrição do meu item
+
+            if (!itemToBeDeletedText) { // Se o meu item não tiver um texto (descrição)
+                throw new Error('Item text is empty') // Lanço esse erro para avisar
+            }
+
+            const deleteBtn = itemToBeDeleted.getByRole('button') // Pego o botão de deletar do meu item da lista 
+            await deleteBtn.click() // Clico no botão que vai realizar a deleção 
+
+            const allDeleteButtons = await page // Pego a página novamente
+                .getByRole('button', { name: /^apagar:/i }) // Busco TODOS os botões que tenham o nome acessível começando com "apagar:"
+                .all() // E pego a lista completa desses botões
+
+            for (const btn of allDeleteButtons) { // Faço um looping por todos os botões de apagar
+                await expect(btn).toBeDisabled() // Verifico se cada um deles está desativado enquanto a ação roda
+            }
+
+            const deleteItemNotVisible = page // Pego a página novamente
+                .getByRole('listitem') // Busco os itens da lista
+                .filter({ hasText: itemToBeDeletedText }) // Filtro a tarefa pelo texto que acabou de ser excluída
+
+            await deleteItemNotVisible.waitFor({ state: 'detached' }) // Espero até que o item seja removido do DOM
+            await expect(deleteItemNotVisible).not.toBeVisible() // Confirmo que ele não está mais visível na página
+
+            const renewdAllButtons = await page // Pego a página novamente
+                .getByRole('button', { name: /^apagar:/i }) // Busco todos os botões de apagar restantes
+                .all() // Pego a lista completa
+
+            for (const btn of renewdAllButtons) { // Faço um looping por todos os botões restantes
+                await expect(btn).toBeEnabled() // Espero que eles estejam habilitados novamente (pois a ação terminou)
+            }
+        })
+    })
+    test.describe('Erros', () => {
+        test('deve mostrar erro se a descrição tem 3 ou menos caracteres', async ({
+            page,
+        }) => {
+            const { input, btn } = getAll(page)
+
+            await input.fill('abc')
+            await btn.click()
         })
     })
 })

@@ -217,14 +217,53 @@ test.describe('<Home /> (E2E)', () => { // Descrição do bloco de testes E2E da
             }
         })
     })
-    test.describe('Erros', () => {
-        test('deve mostrar erro se a descrição tem 3 ou menos caracteres', async ({
-            page,
-        }) => {
-            const { input, btn } = getAll(page)
+test.describe('Erros', () => { // Sub-descrição: testes de tratamento de erros do formulário
+    test('deve mostrar erro se a descrição tem 3 ou menos caracteres', async ({ page }) => { // O que o teste verifica: se o erro de validação de tamanho aparece
+        const { input, btn } = getAll(page) // Pego os elementos da página
 
-            await input.fill('abc')
-            await btn.click()
-        })
+        await input.fill('abc') // Digito um texto com 3 caracteres (inválido)
+        await btn.click() // Clico no botão para tentar criar
+
+        const errorText = 'Descrição precisa ter mais de 3 caracteres' // Defino o texto do erro esperado
+        const error = page.getByText(errorText) // Busco o elemento que contém essa mensagem de erro
+
+        await error.waitFor({ state: 'attached', timeout: 5000 }) // Espero que o elemento seja anexado ao DOM (criado na tela)
+        await expect(error).toBeVisible() // Verifico se o erro está realmente visível para o usuário
     })
+
+    test('deve mostrar se um TODO já existir com a mesma descrição', async ({ page }) => { // O que o teste verifica: se o erro de duplicidade aparece
+        const { input, btn } = getAll(page) // Pego os elementos da página
+
+        await input.fill('eu já existo') // Digito um texto válido
+        await btn.click() // Clico para criar a primeira tarefa
+
+        await input.fill('eu já existo') // Digito exatamente o mesmo texto
+        await btn.click() // Tento criar a segunda tarefa (duplicada)
+
+        const errorText = 'Já existe um todo com ID ou descrição enviados' // Defino o texto do erro esperado
+        const error = page.getByText(errorText) // Busco o elemento com a mensagem de erro
+
+        await error.waitFor({ state: 'attached', timeout: 5000 }) // Espero o erro aparecer no DOM
+        await expect(error).toBeVisible() // Verifico se ele está visível na tela
+    })
+
+    test('deve remover o erro da tela quando o usuário corrigir o erro', async ({ page }) => { // O que o teste verifica: se o erro some ao digitar um texto válido
+        const { input, btn } = getAll(page) // Pego os elementos da página
+
+        await input.fill('abc') // Digito um texto inválido
+        await btn.click() // Clico para tentar criar
+
+        const errorText = 'Descrição precisa ter mais de 3 caracteres' // Defino o texto do erro esperado
+        const error = page.getByText(errorText) // Busco o elemento com a mensagem de erro
+
+        await error.waitFor({ state: 'attached', timeout: 5000 }) // Espero o erro aparecer na tela
+        await expect(error).toBeVisible() // Confirmo que ele está visível
+
+        await input.fill('Essa descrição é valida') // Agora digito um texto válido
+        await btn.click() // Clico novamente para criar
+
+        await error.waitFor({ state: 'detached', timeout: 5000 }) // Espero que o erro seja removido do DOM (desanexado)
+        await expect(error).not.toBeVisible() // Confirmo que o erro NÃO está mais visível na tela
+    })
+})
 })
